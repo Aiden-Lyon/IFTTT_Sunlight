@@ -1,0 +1,43 @@
+// This #include statement was automatically added by the Particle IDE.
+#include <BH1750.h>
+
+BH1750 sensor(0x23, Wire);
+int _light;
+
+
+
+
+void setup()
+{
+sensor.begin();
+
+sensor.set_sensor_mode(BH1750::forced_mode_high_res2);
+
+Serial.begin();
+
+
+Particle.variable("Light lx", _light);
+
+
+
+}
+
+void loop()
+{
+    
+    
+    sensor.make_forced_measurement();
+    _light = sensor.get_light_level();
+    
+    if (_light < 10000)
+    {
+        Particle.publish("Not enough light", String(_light), PRIVATE);
+    }
+    
+    if (_light > 10000)
+    {
+        Particle.publish("Good sunlight", String(_light), PRIVATE);
+    }
+    
+    delay(30s);
+}
